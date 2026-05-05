@@ -17,15 +17,21 @@ public class VendingMachineGUI extends JFrame {
 
         machine = new VendingMachine("School");
 
-        // ITEMS
+        // ================= ITEMS =================
         machine.getInventory().addProduct(new ProductSlot(1), new Drink("Coke", 1.50, 10));
         machine.getInventory().addProduct(new ProductSlot(2), new Drink("Pepsi", 1.50, 8));
         machine.getInventory().addProduct(new ProductSlot(3), new Drink("Water", 1.00, 15));
         machine.getInventory().addProduct(new ProductSlot(4), new Snack("Chips", 1.00, 10));
 
-        // WINDOW
+        // 🔥 NEW ITEMS ADDED
+        machine.getInventory().addProduct(new ProductSlot(5), new Snack("Chocolate", 1.75, 6));
+        machine.getInventory().addProduct(new ProductSlot(6), new Snack("Candy", 0.75, 20));
+        machine.getInventory().addProduct(new ProductSlot(7), new Drink("Juice", 1.25, 12));
+        machine.getInventory().addProduct(new ProductSlot(8), new Snack("Gum", 0.50, 30));
+
+        // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(400, 450);
+        setSize(400, 550);
         setLayout(new GridLayout(0, 1));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -35,7 +41,7 @@ public class VendingMachineGUI extends JFrame {
         add(status);
         add(balance);
 
-        // COINS
+        // ================= COINS =================
         JButton coin1 = new JButton("$1 Coin");
         JButton coin50 = new JButton("$0.50 Coin");
 
@@ -52,15 +58,22 @@ public class VendingMachineGUI extends JFrame {
             updateUI();
         });
 
-        // ITEMS
+        // ================= ITEMS BUTTONS =================
         addButton("Coke", 1);
         addButton("Pepsi", 2);
         addButton("Water", 3);
         addButton("Chips", 4);
 
+        // 🔥 NEW BUTTONS
+        addButton("Chocolate", 5);
+        addButton("Candy", 6);
+        addButton("Juice", 7);
+        addButton("Gum", 8);
+
         setVisible(true);
     }
 
+    // ================= BUTTON HELPER =================
     private void addButton(String name, int id) {
         JButton btn = new JButton("Buy " + name);
 
@@ -73,6 +86,7 @@ public class VendingMachineGUI extends JFrame {
         add(btn);
     }
 
+    // ================= UI UPDATE =================
     private void updateUI() {
         status.setText(machine.getMessage());
         balance.setText("Balance: $" + machine.getBalance());

@@ -14,17 +14,27 @@ public class ReadyState implements VendingState {
     @Override
     public void insert(Coin coin) {
         machine.addBalance(coin.getValue());
-        machine.setMessage("Inserted: " + coin.getValue());
+        machine.setMessage("Inserted: " + coin.getValue() + 
+                            " | Balance: " + machine.getBalance());
     }
 
     @Override
     public void select(int item) {
-        machine.setMessage("Insert coin first");
+
+        if (machine.getBalance() <= 0) {
+            machine.setMessage("Insert coins first");
+            return;
+        }
+
+        machine.setMessage("Item selected: " + item);
+
+        // IMPORTANT: move to payment state
+        machine.setState(new ProcessingPaymentState(machine));
     }
 
     @Override
     public void dispense() {
-        machine.setMessage("Cannot dispense yet");
+        machine.setMessage("Select item first");
     }
 
     @Override

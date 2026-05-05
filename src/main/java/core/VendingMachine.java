@@ -2,7 +2,6 @@ package core;
 
 import state.*;
 import hardware.Coin;
-import core.Inventory;   // ✅ REQUIRED
 
 public class VendingMachine {
 
@@ -10,7 +9,7 @@ public class VendingMachine {
     private String location;
     private VendingState state;
 
-    private Inventory inventory;   // ✅ FIXED
+    private Inventory inventory;
     private String message = "";
 
     public VendingMachine(String location) {
@@ -18,12 +17,12 @@ public class VendingMachine {
         this.state = new ReadyState(this);
         this.currentBalance = 0;
 
-        this.inventory = new Inventory(); // ✅ FIXED
+        this.inventory = new Inventory();
 
         setMessage("Machine ready at " + location);
     }
 
-    // ===== GUI MESSAGE SYSTEM =====
+    // ================= GUI MESSAGE SYSTEM =================
     public void setMessage(String msg) {
         this.message = msg;
     }
@@ -32,12 +31,12 @@ public class VendingMachine {
         return message;
     }
 
-    // ===== INVENTORY ACCESS (FIX YOUR ERROR) =====
+    // ================= INVENTORY =================
     public Inventory getInventory() {
         return inventory;
     }
 
-    // ===== CORE ACTIONS =====
+    // ================= ACTIONS =================
     public void insertCoin(Coin coin) {
         state.insert(coin);
     }
@@ -54,7 +53,7 @@ public class VendingMachine {
         state.cancel();
     }
 
-    // ===== BALANCE =====
+    // ================= BALANCE =================
     public void addBalance(double amount) {
         currentBalance += amount;
     }
@@ -63,15 +62,21 @@ public class VendingMachine {
         return currentBalance;
     }
 
+    // ================= RESET =================
     public void reset() {
         currentBalance = 0;
         setMessage("Machine reset at " + location);
+
+        // 🔥 IMPORTANT: ALWAYS RETURN TO READY STATE
+        setState(new ReadyState(this));
     }
 
+    // ================= STATE =================
     public void setState(VendingState state) {
         this.state = state;
     }
 
+    // ================= LOCATION =================
     public String getLocation() {
         return location;
     }
