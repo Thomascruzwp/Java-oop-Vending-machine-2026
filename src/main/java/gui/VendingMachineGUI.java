@@ -11,18 +11,18 @@ public class VendingMachineGUI extends JFrame {
 
     private JLabel status;
     private JLabel balanceLabel;
-    private JTextArea cartArea;
+    private JLabel cartLabel;
 
-    // ✔ FIXED: fully safe List usage (no ambiguity possible)
+    // ✔ FIX: fully safe List usage (no java.awt conflict possible)
     private java.util.List<String> cart = new ArrayList<>();
-    private java.util.List<Integer> insertedCoins = new ArrayList<>();
+    private java.util.List<Double> coins = new ArrayList<>();
 
     // ================= ITEM =================
     private static class Item {
         String name;
-        int price; // cents
+        double price;
 
-        Item(String name, int price) {
+        Item(String name, double price) {
             this.name = name;
             this.price = price;
         }
@@ -33,50 +33,57 @@ public class VendingMachineGUI extends JFrame {
     public VendingMachineGUI() {
 
         // ================= ITEMS =================
-        register("A1", "Chicken Sandwich", 250);
-        register("A2", "Diet Coke", 185);
-        register("A3", "Pepsi", 165);
-        register("A4", "Sprite", 170);
-        register("C1", "Snickers", 175);
-        register("E2", "Rice Krispies", 135);
+        register("A2", "Diet Coke", 1.85);
+        register("A3", "Pepsi", 1.65);
+        register("A4", "Sprite", 1.70);
+        register("A5", "Fanta Orange", 1.80);
+        register("A6", "Dr Pepper", 1.90);
+
+        register("B1", "Lays Chips", 1.50);
+        register("B2", "Doritos", 1.60);
+        register("B3", "Cheetos", 1.55);
+
+        register("C1", "Snickers", 1.75);
+        register("C2", "KitKat", 1.80);
+        register("C3", "Twix", 1.85);
+
+        register("D1", "Oreo", 2.10);
+        register("E2", "Rice Krispies", 1.35);
+        register("E3", "Cheese Crackers", 1.30);
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(850, 900);
+        setSize(900, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // ================= TOP =================
-        JPanel top = new JPanel(new GridLayout(2, 1));
+        JPanel top = new JPanel(new GridLayout(3, 1));
 
         status = new JLabel("Insert Coins");
         balanceLabel = new JLabel("Balance: $0.00");
+        cartLabel = new JLabel("Cart: empty");
 
         top.add(status);
         top.add(balanceLabel);
+        top.add(cartLabel);
 
         add(top, BorderLayout.NORTH);
-
-        // ================= CART =================
-        cartArea = new JTextArea();
-        cartArea.setEditable(false);
-
-        add(new JScrollPane(cartArea), BorderLayout.EAST);
 
         // ================= GRID =================
         JPanel grid = new JPanel(new GridLayout(0, 4, 8, 8));
 
         // ================= COINS =================
-        addCoin(grid, "$1.00", 100);
-        addCoin(grid, "$0.50", 50);
-        addCoin(grid, "$0.25", 25);
-        addCoin(grid, "$0.10", 10);
-        addCoin(grid, "$0.05", 5);
-        addCoin(grid, "$0.01", 1);
+        addCoin(grid, "$1.00", 1.00);
+        addCoin(grid, "$0.50", 0.50);
+        addCoin(grid, "$0.25", 0.25);
+        addCoin(grid, "$0.10", 0.10);
+        addCoin(grid, "$0.05", 0.05);
+        addCoin(grid, "$0.01", 0.01);
 
         // ================= ITEMS =================
         for (String code : items.keySet()) {
-            addButton(grid, code);
+            addItemButton(grid, code);
         }
 
         // ================= BUY =================
@@ -85,15 +92,15 @@ public class VendingMachineGUI extends JFrame {
 
         buy.addActionListener(e -> {
 
-            int total = calculateTotal();
-            int money = getBalance();
+            double total = calculateTotal();
+            double money = getBalance();
 
             if (money < total) {
                 status.setText("Not enough money");
                 return;
             }
 
-            int change = money - total;
+            double change = money - total;
 
             for (String code : cart) {
                 status.setText("Dispensing " + code);
@@ -101,12 +108,12 @@ public class VendingMachineGUI extends JFrame {
             }
 
             cart.clear();
-            insertedCoins.clear();
+            coins.clear();
 
             updateCart();
             updateUI();
 
-            status.setText("Change: $" + format(change));
+            status.setText("Change: $" + String.format("%.2f", change));
         });
 
         grid.add(buy);
@@ -117,15 +124,15 @@ public class VendingMachineGUI extends JFrame {
 
         cancel.addActionListener(e -> {
 
-            int refund = getBalance();
+            double refund = getBalance();
 
             cart.clear();
-            insertedCoins.clear();
+            coins.clear();
 
             updateCart();
             updateUI();
 
-            status.setText("Refunded: $" + format(refund));
+            status.setText("Refunded: $" + String.format("%.2f", refund));
         });
 
         grid.add(cancel);
@@ -136,29 +143,31 @@ public class VendingMachineGUI extends JFrame {
     }
 
     // ================= REGISTER =================
-    private void register(String code, String name, int price) {
+    private void register(String code, String name, double price) {
         items.put(code, new Item(name, price));
     }
 
     // ================= COINS =================
-    private void addCoin(JPanel panel, String label, int value) {
-
+    private void addCoin(JPanel panel, String label, double value) {
         JButton btn = new JButton(label);
 
-        btn.addActionListener(e -> insertedCoins.add(value));
+        btn.addActionListener(e -> {
+            coins.add(value);
+            updateUI();
+        });
 
         panel.add(btn);
     }
 
     // ================= ITEMS =================
-    private void addButton(JPanel panel, String code) {
+    private void addItemButton(JPanel panel, String code) {
 
         Item item = items.get(code);
 
         JButton btn = new JButton("<html><center>"
                 + code + "<br>"
                 + item.name + "<br>"
-                + "$" + format(item.price)
+                + String.format("$%.2f", item.price)
                 + "</center></html>");
 
         btn.setPreferredSize(new Dimension(160, 110));
@@ -174,41 +183,44 @@ public class VendingMachineGUI extends JFrame {
     // ================= CART =================
     private void updateCart() {
 
-        StringBuilder sb = new StringBuilder();
-
-        for (String code : cart) {
-            sb.append(code).append("\n");
+        if (cart.isEmpty()) {
+            cartLabel.setText("Cart: empty");
+            return;
         }
 
-        sb.append("\nTotal: $").append(format(calculateTotal()));
+        StringBuilder sb = new StringBuilder("<html>Cart:<br>");
+        double total = 0;
 
-        cartArea.setText(sb.toString());
+        for (String code : cart) {
+            sb.append(code).append("<br>");
+            total += items.get(code).price;
+        }
+
+        sb.append("<br>Total: $").append(String.format("%.2f", total)).append("</html>");
+
+        cartLabel.setText(sb.toString());
     }
 
     // ================= TOTAL =================
-    private int calculateTotal() {
-        int total = 0;
+    private double calculateTotal() {
+        double total = 0;
         for (String code : cart) {
             total += items.get(code).price;
         }
         return total;
     }
 
-    private int getBalance() {
-        int total = 0;
-        for (int c : insertedCoins) {
+    // ================= BALANCE =================
+    private double getBalance() {
+        double total = 0;
+        for (double c : coins) {
             total += c;
         }
         return total;
     }
 
-    // ================= FORMAT =================
-    private String format(int cents) {
-        return String.format("%.2f", cents / 100.0);
-    }
-
     // ================= UI =================
     private void updateUI() {
-        balanceLabel.setText("Balance: $" + format(getBalance()));
+        balanceLabel.setText("Balance: $" + String.format("%.2f", getBalance()));
     }
 }
