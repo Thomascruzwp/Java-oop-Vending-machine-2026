@@ -1,13 +1,13 @@
 package product;
 
-public class Snack extends Product {
+public class Drink extends Product {
 
-    public Snack(String name, double price, int stock) {
+    public Drink(String name, double price, int stock) {
         super(name, price, stock);
     }
 
     @Override
     public void dispense() {
-        System.out.println("Dispensing snack: " + name);
+        System.out.println("Dispensing drink: " + name);
     }
 }
