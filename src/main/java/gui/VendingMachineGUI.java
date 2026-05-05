@@ -22,8 +22,6 @@ public class VendingMachineGUI extends JFrame {
         machine.getInventory().addProduct(new ProductSlot(2), new Drink("Pepsi", 1.50, 8));
         machine.getInventory().addProduct(new ProductSlot(3), new Drink("Water", 1.00, 15));
         machine.getInventory().addProduct(new ProductSlot(4), new Snack("Chips", 1.00, 10));
-
-        // 🔥 NEW ITEMS ADDED
         machine.getInventory().addProduct(new ProductSlot(5), new Snack("Chocolate", 1.75, 6));
         machine.getInventory().addProduct(new ProductSlot(6), new Snack("Candy", 0.75, 20));
         machine.getInventory().addProduct(new ProductSlot(7), new Drink("Juice", 1.25, 12));
@@ -31,7 +29,7 @@ public class VendingMachineGUI extends JFrame {
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(400, 550);
+        setSize(400, 600);
         setLayout(new GridLayout(0, 1));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -58,27 +56,31 @@ public class VendingMachineGUI extends JFrame {
             updateUI();
         });
 
-        // ================= ITEMS BUTTONS =================
-        addButton("Coke", 1);
-        addButton("Pepsi", 2);
-        addButton("Water", 3);
-        addButton("Chips", 4);
-
-        // 🔥 NEW BUTTONS
-        addButton("Chocolate", 5);
-        addButton("Candy", 6);
-        addButton("Juice", 7);
-        addButton("Gum", 8);
+        // ================= ITEMS =================
+        addButton("Coke", 1, 1.50);
+        addButton("Pepsi", 2, 1.50);
+        addButton("Water", 3, 1.00);
+        addButton("Chips", 4, 1.00);
+        addButton("Chocolate", 5, 1.75);
+        addButton("Candy", 6, 0.75);
+        addButton("Juice", 7, 1.25);
+        addButton("Gum", 8, 0.50);
 
         setVisible(true);
     }
 
-    // ================= BUTTON HELPER =================
-    private void addButton(String name, int id) {
-        JButton btn = new JButton("Buy " + name);
+    // ================= BUTTON SYSTEM =================
+    private void addButton(String name, int id, double price) {
+
+        JButton btn = new JButton(name + " ($" + price + ")");
 
         btn.addActionListener(e -> {
+
             machine.selectItem(id);
+
+            // 🔥 FORCE UI MESSAGE BEFORE DISPENSE
+            machine.setMessage("Dispensing " + name + "...");
+
             machine.dispense();
             updateUI();
         });
