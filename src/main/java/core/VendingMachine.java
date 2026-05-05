@@ -2,6 +2,7 @@ package core;
 
 import state.*;
 import hardware.Coin;
+import core.Inventory;   // ✅ REQUIRED
 
 public class VendingMachine {
 
@@ -9,6 +10,7 @@ public class VendingMachine {
     private String location;
     private VendingState state;
 
+    private Inventory inventory;   // ✅ FIXED
     private String message = "";
 
     public VendingMachine(String location) {
@@ -16,7 +18,8 @@ public class VendingMachine {
         this.state = new ReadyState(this);
         this.currentBalance = 0;
 
-        // ✅ FIX: use location so it is not "unused"
+        this.inventory = new Inventory(); // ✅ FIXED
+
         setMessage("Machine ready at " + location);
     }
 
@@ -27,6 +30,11 @@ public class VendingMachine {
 
     public String getMessage() {
         return message;
+    }
+
+    // ===== INVENTORY ACCESS (FIX YOUR ERROR) =====
+    public Inventory getInventory() {
+        return inventory;
     }
 
     // ===== CORE ACTIONS =====
@@ -64,7 +72,6 @@ public class VendingMachine {
         this.state = state;
     }
 
-    // ===== OPTIONAL (FOR GUI DISPLAY) =====
     public String getLocation() {
         return location;
     }
