@@ -5,8 +5,16 @@ import product.*;
 import hardware.Coin;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class VendingMachineGUI extends JFrame {
 
@@ -16,7 +24,7 @@ public class VendingMachineGUI extends JFrame {
     private JLabel balance;
     private JLabel cartLabel;
 
-    // ================= CART (ONLY CODES) =================
+    // ================= CART (FIXED) =================
     private List<String> cart = new ArrayList<>();
 
     // ================= ITEM MODEL =================
@@ -78,7 +86,7 @@ public class VendingMachineGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // ================= TOP =================
+        // ================= TOP PANEL =================
         JPanel top = new JPanel(new GridLayout(3, 1));
 
         status = new JLabel("Insert Coins");
@@ -127,7 +135,7 @@ public class VendingMachineGUI extends JFrame {
             double total = calculateTotal();
 
             if (machine.getBalance() < total) {
-                machine.setMessage("Not enough money");
+                machine.setMessage("Not enough balance");
                 updateUI();
                 return;
             }
@@ -147,6 +155,7 @@ public class VendingMachineGUI extends JFrame {
             machine.addBalance(-total);
 
             cart.clear();
+
             updateCart();
             updateUI();
 
@@ -183,20 +192,11 @@ public class VendingMachineGUI extends JFrame {
 
         Item item = items.get(code);
 
-        JButton btn = new JButton("<html><center>"
-                + code + " - " + item.name
-                + "<br>$" + item.price
-                + "</center></html>");
-
-        btn.setBackground(new Color(
-                (int)(Math.random() * 200 + 50),
-                (int)(Math.random() * 200 + 50),
-                (int)(Math.random() * 200 + 50)
-        ));
+        JButton btn = new JButton(code + " - " + item.name + " ($" + item.price + ")");
 
         btn.addActionListener(e -> {
             cart.add(code);
-            machine.setMessage(item.name + " (" + code + ") added");
+            machine.setMessage(item.name + " added");
             updateCart();
             updateUI();
         });
@@ -217,7 +217,6 @@ public class VendingMachineGUI extends JFrame {
 
         for (String code : cart) {
             Item item = items.get(code);
-
             sb.append(code).append(" - ").append(item.name).append("<br>");
             total += item.price;
         }
@@ -230,11 +229,9 @@ public class VendingMachineGUI extends JFrame {
     // ================= TOTAL =================
     private double calculateTotal() {
         double total = 0;
-
         for (String code : cart) {
             total += items.get(code).price;
         }
-
         return total;
     }
 
