@@ -4,8 +4,16 @@ import core.*;
 import hardware.Coin;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class VendingMachineGUI extends JFrame {
 
@@ -19,12 +27,11 @@ public class VendingMachineGUI extends JFrame {
 
     private List<String> cart = new ArrayList<>();
 
+    // ONLY price + code system (no unused name field anymore)
     private static class Item {
-        String name;
         double price;
 
-        Item(String name, double price) {
-            this.name = name;
+        Item(double price) {
             this.price = price;
         }
     }
@@ -36,40 +43,40 @@ public class VendingMachineGUI extends JFrame {
         machine = new VendingMachine("School");
 
         // ================= ITEMS =================
-        register("A1", "Chicken Sandwich", 2.50);
-        register("A2", "Diet Coke", 1.85);
-        register("A3", "Pepsi", 1.65);
-        register("A4", "Sprite", 1.70);
-        register("A5", "Fanta Orange", 1.80);
-        register("A6", "Dr Pepper", 1.90);
-        register("A7", "Water Bottle", 1.00);
-        register("A8", "Sparkling Water", 1.25);
-        register("A9", "Gatorade", 2.25);
-        register("A10", "Powerade", 2.35);
+        register("A1", 2.50);
+        register("A2", 1.85);
+        register("A3", 1.65);
+        register("A4", 1.70);
+        register("A5", 1.80);
+        register("A6", 1.90);
+        register("A7", 1.00);
+        register("A8", 1.25);
+        register("A9", 2.25);
+        register("A10", 2.35);
 
-        register("B1", "Lays Chips", 1.50);
-        register("B2", "Doritos", 1.60);
-        register("B3", "Cheetos", 1.55);
-        register("B4", "Ruffles", 1.65);
-        register("B5", "Pringles", 2.00);
+        register("B1", 1.50);
+        register("B2", 1.60);
+        register("B3", 1.55);
+        register("B4", 1.65);
+        register("B5", 2.00);
 
-        register("C1", "Snickers", 1.75);
-        register("C2", "KitKat", 1.80);
-        register("C3", "Twix", 1.85);
-        register("C4", "M&Ms", 1.95);
-        register("C5", "Skittles", 1.90);
+        register("C1", 1.75);
+        register("C2", 1.80);
+        register("C3", 1.85);
+        register("C4", 1.95);
+        register("C5", 1.90);
 
-        register("D1", "Oreo", 2.10);
-        register("D2", "Granola Bar", 1.40);
-        register("D3", "Trail Mix", 2.30);
-        register("D4", "Peanuts", 1.20);
-        register("D5", "Crackers", 1.25);
+        register("D1", 2.10);
+        register("D2", 1.40);
+        register("D3", 2.30);
+        register("D4", 1.20);
+        register("D5", 1.25);
 
-        register("E1", "Pretzels", 1.45);
-        register("E2", "Rice Krispies", 1.35);
-        register("E3", "Cheese Crackers", 1.30);
-        register("E4", "Beef Jerky", 2.75);
-        register("E5", "Iced Tea", 2.10);
+        register("E1", 1.45);
+        register("E2", 1.35);
+        register("E3", 1.30);
+        register("E4", 2.75);
+        register("E5", 2.10);
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
@@ -77,7 +84,7 @@ public class VendingMachineGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // ================= TOP PANEL =================
+        // ================= TOP =================
         JPanel top = new JPanel(new GridLayout(3, 1));
 
         status = new JLabel("Insert Coins");
@@ -92,7 +99,7 @@ public class VendingMachineGUI extends JFrame {
 
         add(top, BorderLayout.NORTH);
 
-        // ================= CART AREA =================
+        // ================= CART =================
         cartArea = new JTextArea();
         cartArea.setEditable(false);
         cartArea.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -151,12 +158,7 @@ public class VendingMachineGUI extends JFrame {
 
             updateCart();
 
-            if (change > 0) {
-                status.setText("Change returned: $" + String.format("%.2f", change));
-            } else {
-                status.setText("Exact payment received");
-            }
-
+            status.setText("Change: $" + String.format("%.2f", change));
             updateUI();
         });
 
@@ -187,8 +189,8 @@ public class VendingMachineGUI extends JFrame {
     }
 
     // ================= REGISTER =================
-    private void register(String code, String name, double price) {
-        items.put(code, new Item(name, price));
+    private void register(String code, double price) {
+        items.put(code, new Item(price));
     }
 
     // ================= BUTTON =================
@@ -198,7 +200,6 @@ public class VendingMachineGUI extends JFrame {
 
         JButton btn = new JButton("<html><center>"
                 + code + "<br>"
-                + item.name + "<br>"
                 + String.format("$%.2f", item.price)
                 + "</center></html>");
 
