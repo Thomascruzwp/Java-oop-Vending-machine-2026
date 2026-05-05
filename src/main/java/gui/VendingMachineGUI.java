@@ -10,12 +10,12 @@ import java.util.Map;
 public class VendingMachineGUI extends JFrame {
 
     private JLabel status;
-    private JLabel balanceLabel;
-    private JLabel cartLabel;
+    private JLabel balance;
 
-    // ✔ FIX: fully safe List usage (no java.awt conflict possible)
-    private java.util.List<String> cart = new ArrayList<>();
-    private java.util.List<Double> coins = new ArrayList<>();
+    private JTextArea cartArea;
+
+    private List<String> cart = new ArrayList<>();
+    private List<Double> coins = new ArrayList<>();
 
     // ================= ITEM =================
     private static class Item {
@@ -32,24 +32,40 @@ public class VendingMachineGUI extends JFrame {
 
     public VendingMachineGUI() {
 
-        // ================= ITEMS =================
+        // ================= ITEMS (A1 REMOVED) =================
         register("A2", "Diet Coke", 1.85);
         register("A3", "Pepsi", 1.65);
         register("A4", "Sprite", 1.70);
         register("A5", "Fanta Orange", 1.80);
         register("A6", "Dr Pepper", 1.90);
+        register("A7", "Water Bottle", 1.00);
+        register("A8", "Sparkling Water", 1.25);
+        register("A9", "Gatorade Blue", 2.25);
+        register("A10", "Powerade Red", 2.35);
 
         register("B1", "Lays Chips", 1.50);
         register("B2", "Doritos", 1.60);
         register("B3", "Cheetos", 1.55);
+        register("B4", "Ruffles", 1.65);
+        register("B5", "Pringles", 2.00);
 
         register("C1", "Snickers", 1.75);
         register("C2", "KitKat", 1.80);
         register("C3", "Twix", 1.85);
+        register("C4", "M&Ms", 1.95);
+        register("C5", "Skittles", 1.90);
 
-        register("D1", "Oreo", 2.10);
+        register("D1", "Oreo Cookies", 2.10);
+        register("D2", "Granola Bar", 1.40);
+        register("D3", "Trail Mix", 2.30);
+        register("D4", "Salted Peanuts", 1.20);
+        register("D5", "Salt Crackers", 1.25);
+
+        register("E1", "Pretzels", 1.45);
         register("E2", "Rice Krispies", 1.35);
         register("E3", "Cheese Crackers", 1.30);
+        register("E4", "Beef Jerky", 2.75);
+        register("E5", "Iced Tea", 2.10);
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
@@ -58,17 +74,25 @@ public class VendingMachineGUI extends JFrame {
         setLayout(new BorderLayout());
 
         // ================= TOP =================
-        JPanel top = new JPanel(new GridLayout(3, 1));
+        JPanel top = new JPanel(new GridLayout(2, 1));
 
         status = new JLabel("Insert Coins");
-        balanceLabel = new JLabel("Balance: $0.00");
-        cartLabel = new JLabel("Cart: empty");
+        balance = new JLabel("Balance: $0.00");
 
         top.add(status);
-        top.add(balanceLabel);
-        top.add(cartLabel);
+        top.add(balance);
 
         add(top, BorderLayout.NORTH);
+
+        // ================= CART (FIXED UI) =================
+        cartArea = new JTextArea();
+        cartArea.setEditable(false);
+        cartArea.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JScrollPane scroll = new JScrollPane(cartArea);
+        scroll.setPreferredSize(new Dimension(220, 0));
+
+        add(scroll, BorderLayout.EAST);
 
         // ================= GRID =================
         JPanel grid = new JPanel(new GridLayout(0, 4, 8, 8));
@@ -104,7 +128,7 @@ public class VendingMachineGUI extends JFrame {
 
             for (String code : cart) {
                 status.setText("Dispensing " + code);
-                try { Thread.sleep(40); } catch (Exception ignored) {}
+                try { Thread.sleep(30); } catch (Exception ignored) {}
             }
 
             cart.clear();
@@ -184,21 +208,21 @@ public class VendingMachineGUI extends JFrame {
     private void updateCart() {
 
         if (cart.isEmpty()) {
-            cartLabel.setText("Cart: empty");
+            cartArea.setText("Cart: empty");
             return;
         }
 
-        StringBuilder sb = new StringBuilder("<html>Cart:<br>");
+        StringBuilder sb = new StringBuilder();
         double total = 0;
 
         for (String code : cart) {
-            sb.append(code).append("<br>");
+            sb.append(code).append("\n");
             total += items.get(code).price;
         }
 
-        sb.append("<br>Total: $").append(String.format("%.2f", total)).append("</html>");
+        sb.append("\nTotal: $").append(String.format("%.2f", total));
 
-        cartLabel.setText(sb.toString());
+        cartArea.setText(sb.toString());
     }
 
     // ================= TOTAL =================
@@ -221,6 +245,6 @@ public class VendingMachineGUI extends JFrame {
 
     // ================= UI =================
     private void updateUI() {
-        balanceLabel.setText("Balance: $" + String.format("%.2f", getBalance()));
+        balance.setText("Balance: $" + String.format("%.2f", getBalance()));
     }
 }
