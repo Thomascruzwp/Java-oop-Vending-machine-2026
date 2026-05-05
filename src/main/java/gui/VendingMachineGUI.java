@@ -1,7 +1,6 @@
 package gui;
 
-import core.VendingMachine;
-import core.ProductSlot;
+import core.*;
 import product.*;
 import hardware.Coin;
 
@@ -12,80 +11,70 @@ public class VendingMachineGUI extends JFrame {
 
     private VendingMachine machine;
     private JLabel status;
-    private JLabel balanceLabel;
+    private JLabel balance;
 
     public VendingMachineGUI() {
 
-        // ===== MACHINE =====
         machine = new VendingMachine("School");
 
-        // ===== INVENTORY =====
+        // ITEMS
         machine.getInventory().addProduct(new ProductSlot(1), new Drink("Coke", 1.50, 10));
         machine.getInventory().addProduct(new ProductSlot(2), new Drink("Pepsi", 1.50, 8));
-        machine.getInventory().addProduct(new ProductSlot(3), new Drink("Sprite", 1.50, 7));
-        machine.getInventory().addProduct(new ProductSlot(4), new Drink("Water", 1.00, 20));
+        machine.getInventory().addProduct(new ProductSlot(3), new Drink("Water", 1.00, 15));
+        machine.getInventory().addProduct(new ProductSlot(4), new Snack("Chips", 1.00, 10));
 
-        machine.getInventory().addProduct(new ProductSlot(5), new Snack("Chips", 1.00, 10));
-        machine.getInventory().addProduct(new ProductSlot(6), new Snack("Chocolate", 1.25, 8));
-        machine.getInventory().addProduct(new ProductSlot(7), new Snack("Gum", 0.75, 25));
-
-        // ===== WINDOW =====
+        // WINDOW
         setTitle("Vending Machine");
-        setSize(400, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 450);
         setLayout(new GridLayout(0, 1));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         status = new JLabel("Insert Coins");
-        balanceLabel = new JLabel("Balance: $0.00");
+        balance = new JLabel("Balance: $0.00");
 
         add(status);
-        add(balanceLabel);
+        add(balance);
 
-        // ===== COIN BUTTONS =====
-        JButton coin1 = new JButton("Insert $1.00");
-        JButton coin50 = new JButton("Insert $0.50");
+        // COINS
+        JButton coin1 = new JButton("$1 Coin");
+        JButton coin50 = new JButton("$0.50 Coin");
 
         add(coin1);
         add(coin50);
 
         coin1.addActionListener(e -> {
             machine.insertCoin(new Coin(1.0));
-            updateUI("Inserted $1.00");
+            updateUI();
         });
 
         coin50.addActionListener(e -> {
             machine.insertCoin(new Coin(0.5));
-            updateUI("Inserted $0.50");
+            updateUI();
         });
 
-        // ===== ITEM BUTTONS =====
+        // ITEMS
         addButton("Coke", 1);
         addButton("Pepsi", 2);
-        addButton("Sprite", 3);
-        addButton("Water", 4);
-        addButton("Chips", 5);
-        addButton("Chocolate", 6);
-        addButton("Gum", 7);
+        addButton("Water", 3);
+        addButton("Chips", 4);
 
         setVisible(true);
     }
 
-    // ===== BUTTON HELPER =====
     private void addButton(String name, int id) {
         JButton btn = new JButton("Buy " + name);
 
         btn.addActionListener(e -> {
             machine.selectItem(id);
             machine.dispense();
-            updateUI("Dispensed " + name);
+            updateUI();
         });
 
         add(btn);
     }
 
-    // ===== UI UPDATE =====
-    private void updateUI(String message) {
-        status.setText(message);
-        balanceLabel.setText("Balance: $" + machine.getBalance());
+    private void updateUI() {
+        status.setText(machine.getMessage());
+        balance.setText("Balance: $" + machine.getBalance());
     }
 }

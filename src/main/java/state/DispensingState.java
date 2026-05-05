@@ -13,24 +13,23 @@ public class DispensingState implements VendingState {
 
     @Override
     public void select(int item) {
-        System.out.println("Already dispensing");
+        machine.setMessage("Already dispensing");
     }
 
     @Override
     public void insert(Coin coin) {
-        System.out.println("Cannot insert now");
+        machine.setMessage("Cannot insert now");
     }
 
     @Override
     public void dispense() {
-        System.out.println("Finished dispensing");
-
+        machine.setMessage("Dispensing item...");
         machine.reset();
         machine.setState(new ReadyState(machine));
     }
 
     @Override
     public void cancel() {
-        System.out.println("Cannot cancel");
+        machine.setMessage("Cannot cancel");
     }
 }

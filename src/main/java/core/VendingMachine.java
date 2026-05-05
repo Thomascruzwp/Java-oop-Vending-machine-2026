@@ -7,17 +7,29 @@ public class VendingMachine {
 
     private double currentBalance;
     private String location;
-
-    private Inventory inventory;
     private VendingState state;
+
+    private String message = "";
 
     public VendingMachine(String location) {
         this.location = location;
-        this.inventory = new Inventory();
         this.state = new ReadyState(this);
         this.currentBalance = 0;
+
+        // ✅ FIX: use location so it is not "unused"
+        setMessage("Machine ready at " + location);
     }
 
+    // ===== GUI MESSAGE SYSTEM =====
+    public void setMessage(String msg) {
+        this.message = msg;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    // ===== CORE ACTIONS =====
     public void insertCoin(Coin coin) {
         state.insert(coin);
     }
@@ -34,10 +46,7 @@ public class VendingMachine {
         state.cancel();
     }
 
-    public void setState(VendingState state) {
-        this.state = state;
-    }
-
+    // ===== BALANCE =====
     public void addBalance(double amount) {
         currentBalance += amount;
     }
@@ -46,13 +55,17 @@ public class VendingMachine {
         return currentBalance;
     }
 
-    // 🔥 FIX FOR YOUR ERROR
     public void reset() {
         currentBalance = 0;
-        System.out.println("Machine reset");
+        setMessage("Machine reset at " + location);
     }
 
-    public Inventory getInventory() {
-        return inventory;
+    public void setState(VendingState state) {
+        this.state = state;
+    }
+
+    // ===== OPTIONAL (FOR GUI DISPLAY) =====
+    public String getLocation() {
+        return location;
     }
 }
