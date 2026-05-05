@@ -17,7 +17,7 @@ public class VendingMachineGUI extends JFrame {
 
         machine = new VendingMachine("School");
 
-        // ================= ITEMS =================
+        // ================= INVENTORY =================
         machine.getInventory().addProduct(new ProductSlot(1), new Drink("Coke", 1.50, 10));
         machine.getInventory().addProduct(new ProductSlot(2), new Drink("Pepsi", 1.50, 8));
         machine.getInventory().addProduct(new ProductSlot(3), new Drink("Water", 1.00, 15));
@@ -78,7 +78,7 @@ public class VendingMachineGUI extends JFrame {
 
         btn.addActionListener(e -> {
 
-            // ❌ NOT ENOUGH MONEY CHECK
+            // ❌ NOT ENOUGH MONEY
             if (machine.getBalance() < price) {
                 machine.setMessage("Not enough money for " + name);
                 updateUI();
@@ -88,7 +88,7 @@ public class VendingMachineGUI extends JFrame {
             // ✔ SELECT ITEM
             machine.selectItem(id);
 
-            // ✔ SHOW DISPENSING MESSAGE
+            // ✔ SHOW DISPENSING MESSAGE (THIS STAYS NOW)
             machine.setMessage("Dispensing " + name + "...");
 
             // ✔ DEDUCT MONEY

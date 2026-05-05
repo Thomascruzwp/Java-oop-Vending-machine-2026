@@ -22,7 +22,7 @@ public class VendingMachine {
         setMessage("Machine ready at " + location);
     }
 
-    // ================= GUI MESSAGE SYSTEM =================
+    // ================= MESSAGE =================
     public void setMessage(String msg) {
         this.message = msg;
     }
@@ -62,12 +62,13 @@ public class VendingMachine {
         return currentBalance;
     }
 
-    // ================= RESET =================
+    // ================= RESET (FIXED) =================
     public void reset() {
         currentBalance = 0;
-        setMessage("Machine reset at " + location);
 
-        // 🔥 IMPORTANT: ALWAYS RETURN TO READY STATE
+        // ❌ REMOVED MESSAGE OVERWRITE (IMPORTANT FIX)
+        // previously: setMessage("Machine reset at " + location);
+
         setState(new ReadyState(this));
     }
 
