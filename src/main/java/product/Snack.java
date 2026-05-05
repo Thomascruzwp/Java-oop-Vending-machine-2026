@@ -2,19 +2,12 @@ package product;
 
 public class Snack extends Product {
 
-    private String name;
-    private double price;
-
-    public Snack(String name, double price) {
-        this.name = name;
-        this.price = price;
+    public Snack(String name, double price, int stock) {
+        super(name, price, stock);
     }
 
+    @Override
     public void dispense() {
-        System.out.println("Dispensing Snack: " + name);
-    }
-
-    public double getPrice() {
-        return price;
+        System.out.println("Dispensing snack: " + name);
     }
 }

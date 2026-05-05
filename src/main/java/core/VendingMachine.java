@@ -1,56 +1,65 @@
 package core;
 
-import state.VendingState;
-import state.ReadyState;
-import hardware.Coin;
-import hardware.CoinAcceptor;
+import state.*;
+import hardware.*;
+import product.*;
 
 public class VendingMachine {
 
     private double currentBalance;
     private String location;
 
-    private Inventory inventory;              // ✔ UML FIX
-    private CoinAcceptor coinAcceptor;        // ✔ Aggregation
+    private Inventory inventory;
+    private CoinAcceptor coinAcceptor;
+
     private VendingState state;
 
-    public VendingMachine(String location, Inventory inventory) {
+    public VendingMachine(String location) {
         this.location = location;
-        this.inventory = inventory;
+        this.inventory = new Inventory();
         this.coinAcceptor = new CoinAcceptor();
+
         this.state = new ReadyState(this);
+        this.currentBalance = 0;
     }
 
-    // UML methods
+    // UML METHODS
+    public void insertCoin(Coin coin) {
+        state.insert(coin);
+    }
+
     public void selectItem(int id) {
         state.select(id);
     }
 
-    public void insertCoin(Coin coin) {
-        if (coinAcceptor.accept(coin)) {
-            state.insert();
-            currentBalance += coin.getValue();
-        }
+    public void dispense() {
+        state.dispense();
     }
 
-    // getters/setters
-    public double getBalance() {
-        return currentBalance;
+    public void cancel() {
+        state.cancel();
     }
 
-    public void deduct(double amount) {
-        currentBalance -= amount;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
+    // STATE CONTROL
     public void setState(VendingState state) {
         this.state = state;
     }
 
-    public void reset() {
-        currentBalance = 0;
+    // BALANCE
+    public void addBalance(double amount) {
+        currentBalance += amount;
+    }
+
+    public double getBalance() {
+        return currentBalance;
+    }
+
+    // GETTERS
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public CoinAcceptor getCoinAcceptor() {
+        return coinAcceptor;
     }
 }

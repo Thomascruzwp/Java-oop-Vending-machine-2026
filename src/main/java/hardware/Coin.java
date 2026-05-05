@@ -1,6 +1,7 @@
 package hardware;
 
 public class Coin {
+
     private double value;
 
     public Coin(double value) {

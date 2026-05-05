@@ -1,20 +1,12 @@
 package product;
 
-public class Drink extends Product {
+public class Snack extends Product {
 
-    private String name;
-    private double price;
-
-    public Drink(String name, double price) {
-        this.name = name;
-        this.price = price;
+    public Snack(String name, double price, int stock) {
+        super(name, price, stock);
     }
 
     public void dispense() {
-        System.out.println("Dispensing Drink: " + name);
-    }
-
-    public double getPrice() {
-        return price;
+        System.out.println("Dispensing snack: " + name);
     }
 }

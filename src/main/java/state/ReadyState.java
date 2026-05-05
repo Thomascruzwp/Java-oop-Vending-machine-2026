@@ -1,6 +1,7 @@
 package state;
 
 import core.VendingMachine;
+import hardware.Coin;
 
 public class ReadyState implements VendingState {
 
@@ -10,17 +11,18 @@ public class ReadyState implements VendingState {
         this.machine = machine;
     }
 
-    public void select(int item) {
-        System.out.println("Insert coin first");
+    public void insert(Coin coin) {
+        machine.addBalance(coin.getValue());
+        System.out.println("Coin inserted: " + coin.getValue());
     }
 
-    public void insert() {
-        machine.setState(new ProcessingPaymentState(machine));
+    public void select(int item) {
+        System.out.println("Select after payment.");
     }
 
     public void dispense() {}
 
     public void cancel() {
-        machine.reset();
+        System.out.println("Nothing to cancel.");
     }
 }
