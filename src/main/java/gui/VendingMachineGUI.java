@@ -32,8 +32,7 @@ public class VendingMachineGUI extends JFrame {
 
     public VendingMachineGUI() {
 
-        // ================= ORIGINAL ITEMS (A1 REMOVED ONLY) =================
-
+        // ================= ITEMS (A1 REMOVED) =================
         register("A2", "Diet Coke", 1.85);
         register("A3", "Pepsi", 1.65);
         register("A4", "Sprite", 1.70);
@@ -98,11 +97,10 @@ public class VendingMachineGUI extends JFrame {
         // ================= CENTER =================
         JPanel center = new JPanel(new GridLayout(1, 2));
 
-        // ================= MONEY PANEL (COINS + BILLS TOGETHER) =================
+        // ================= MONEY PANEL =================
         JPanel moneyPanel = new JPanel(new GridLayout(0, 1));
         moneyPanel.setBorder(BorderFactory.createTitledBorder("Money"));
 
-        // coins
         addMoney(moneyPanel, "$1.00", 1.00);
         addMoney(moneyPanel, "$0.50", 0.50);
         addMoney(moneyPanel, "$0.25", 0.25);
@@ -110,7 +108,6 @@ public class VendingMachineGUI extends JFrame {
         addMoney(moneyPanel, "$0.05", 0.05);
         addMoney(moneyPanel, "$0.01", 0.01);
 
-        // bills
         addMoney(moneyPanel, "$1 Bill", 1.00);
         addMoney(moneyPanel, "$5 Bill", 5.00);
         addMoney(moneyPanel, "$10 Bill", 10.00);
@@ -129,9 +126,12 @@ public class VendingMachineGUI extends JFrame {
 
         add(center, BorderLayout.CENTER);
 
-        // ================= BUY =================
+        // ================= BUTTONS =================
         JButton buy = new JButton("BUY ALL");
         buy.setBackground(Color.GREEN);
+
+        JButton cancel = new JButton("CANCEL");
+        cancel.setBackground(Color.RED);
 
         buy.addActionListener(e -> {
 
@@ -159,7 +159,24 @@ public class VendingMachineGUI extends JFrame {
             status.setText("Change: $" + String.format("%.2f", change));
         });
 
-        add(buy, BorderLayout.SOUTH);
+        cancel.addActionListener(e -> {
+
+            double refund = getBalance();
+
+            cart.clear();
+            money.clear();
+
+            updateCart();
+            updateUI();
+
+            status.setText("Refunded: $" + String.format("%.2f", refund));
+        });
+
+        JPanel bottom = new JPanel(new GridLayout(1, 2));
+        bottom.add(buy);
+        bottom.add(cancel);
+
+        add(bottom, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -171,7 +188,10 @@ public class VendingMachineGUI extends JFrame {
 
     // ================= MONEY =================
     private void addMoney(JPanel panel, String label, double value) {
+
         JButton btn = new JButton(label);
+        btn.setFont(new Font("Arial", Font.PLAIN, 11));
+        btn.setMargin(new Insets(2, 2, 2, 2));
 
         btn.addActionListener(e -> {
             money.add(value);
@@ -186,7 +206,16 @@ public class VendingMachineGUI extends JFrame {
 
         Item item = items.get(code);
 
-        JButton btn = new JButton(code + " - " + item.name + " $" + String.format("%.2f", item.price));
+        JButton btn = new JButton(
+                "<html><center>"
+                        + code + "<br>"
+                        + item.name + "<br>"
+                        + String.format("$%.2f", item.price)
+                        + "</center></html>"
+        );
+
+        btn.setFont(new Font("Arial", Font.PLAIN, 10));
+        btn.setPreferredSize(new Dimension(140, 90));
 
         btn.addActionListener(e -> {
             cart.add(code);
