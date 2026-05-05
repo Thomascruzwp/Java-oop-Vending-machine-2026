@@ -48,11 +48,13 @@ public class VendingMachineGUI extends JFrame {
 
         coin1.addActionListener(e -> {
             machine.insertCoin(new Coin(1.0));
+            machine.setMessage("Inserted $1");
             updateUI();
         });
 
         coin50.addActionListener(e -> {
             machine.insertCoin(new Coin(0.5));
+            machine.setMessage("Inserted $0.50");
             updateUI();
         });
 
@@ -69,19 +71,32 @@ public class VendingMachineGUI extends JFrame {
         setVisible(true);
     }
 
-    // ================= BUTTON SYSTEM =================
+    // ================= BUTTON LOGIC =================
     private void addButton(String name, int id, double price) {
 
         JButton btn = new JButton(name + " ($" + price + ")");
 
         btn.addActionListener(e -> {
 
+            // ❌ NOT ENOUGH MONEY CHECK
+            if (machine.getBalance() < price) {
+                machine.setMessage("Not enough money for " + name);
+                updateUI();
+                return;
+            }
+
+            // ✔ SELECT ITEM
             machine.selectItem(id);
 
-            // 🔥 FORCE UI MESSAGE BEFORE DISPENSE
+            // ✔ SHOW DISPENSING MESSAGE
             machine.setMessage("Dispensing " + name + "...");
 
+            // ✔ DEDUCT MONEY
+            machine.addBalance(-price);
+
+            // ✔ DISPENSE
             machine.dispense();
+
             updateUI();
         });
 
@@ -91,6 +106,6 @@ public class VendingMachineGUI extends JFrame {
     // ================= UI UPDATE =================
     private void updateUI() {
         status.setText(machine.getMessage());
-        balance.setText("Balance: $" + machine.getBalance());
+        balance.setText("Balance: $" + String.format("%.2f", machine.getBalance()));
     }
 }
