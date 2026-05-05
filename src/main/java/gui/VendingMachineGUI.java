@@ -4,8 +4,16 @@ import core.*;
 import hardware.Coin;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class VendingMachineGUI extends JFrame {
 
@@ -115,7 +123,7 @@ public class VendingMachineGUI extends JFrame {
             addButton(grid, code);
         }
 
-        // ================= BUY ALL =================
+        // ================= BUY =================
         JButton buy = new JButton("BUY ALL");
         buy.setBackground(Color.GREEN);
 
