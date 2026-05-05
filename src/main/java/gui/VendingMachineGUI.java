@@ -47,8 +47,6 @@ public class VendingMachineGUI extends JFrame {
         machine.getInventory().addProduct(new ProductSlot(24), new Snack("Peanuts", 1.00, 18));
         machine.getInventory().addProduct(new ProductSlot(25), new Snack("Crackers", 1.00, 15));
 
-        // ❌ Popcorn REMOVED
-        // ✔ Replaced with Pretzels
         machine.getInventory().addProduct(new ProductSlot(26), new Snack("Pretzels", 1.50, 10));
 
         machine.getInventory().addProduct(new ProductSlot(27), new Snack("Rice Krispies", 1.25, 12));
@@ -58,9 +56,10 @@ public class VendingMachineGUI extends JFrame {
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(500, 800);
-        setLayout(new GridLayout(0, 1));
+        setSize(550, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setLayout(new GridLayout(0, 5, 5, 5)); // 🔥 GRID TILES
 
         status = new JLabel("Insert Coins");
         balance = new JLabel("Balance: $0.00");
@@ -117,7 +116,6 @@ public class VendingMachineGUI extends JFrame {
         addButton("Peanuts", 24, 1.00);
         addButton("Crackers", 25, 1.00);
 
-        // ✔ Pretzels instead of Popcorn
         addButton("Pretzels", 26, 1.50);
 
         addButton("Rice Krispies", 27, 1.25);
@@ -128,10 +126,25 @@ public class VendingMachineGUI extends JFrame {
         setVisible(true);
     }
 
-    // ================= BUTTON LOGIC =================
+    // ================= COLORED TILE BUTTON =================
     private void addButton(String name, int id, double price) {
 
-        JButton btn = new JButton(name + " ($" + price + ")");
+        JButton btn = new JButton("<html><center>" + name + "<br>$" + price + "</center></html>");
+
+        btn.setPreferredSize(new Dimension(90, 90));
+        btn.setFont(new Font("Arial", Font.BOLD, 10));
+        btn.setFocusPainted(false);
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+
+        // ===== COLOR SYSTEM =====
+        if (price <= 1.00) {
+            btn.setBackground(new Color(144, 238, 144)); // green
+        } else if (price <= 1.50) {
+            btn.setBackground(new Color(173, 216, 230)); // blue
+        } else {
+            btn.setBackground(new Color(255, 160, 160)); // red
+        }
 
         btn.addActionListener(e -> {
 
