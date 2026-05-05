@@ -6,12 +6,20 @@ import hardware.Coin;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VendingMachineGUI extends JFrame {
 
     private VendingMachine machine;
     private JLabel status;
     private JLabel balance;
+    private JLabel cartLabel;
+
+    // ================= CART =================
+    private List<Integer> cartIds = new ArrayList<>();
+    private List<String> cartNames = new ArrayList<>();
+    private List<Double> cartPrices = new ArrayList<>();
 
     public VendingMachineGUI() {
 
@@ -28,7 +36,6 @@ public class VendingMachineGUI extends JFrame {
         machine.getInventory().addProduct(new ProductSlot(8), new Drink("Sparkling Water", 1.25, 12));
         machine.getInventory().addProduct(new ProductSlot(9), new Drink("Gatorade", 2.25, 15));
         machine.getInventory().addProduct(new ProductSlot(10), new Drink("Powerade", 2.35, 12));
-        machine.getInventory().addProduct(new ProductSlot(30), new Drink("Iced Tea", 2.10, 12));
 
         machine.getInventory().addProduct(new ProductSlot(11), new Snack("Lays Chips", 1.50, 15));
         machine.getInventory().addProduct(new ProductSlot(12), new Snack("Doritos", 1.60, 15));
@@ -52,30 +59,29 @@ public class VendingMachineGUI extends JFrame {
         machine.getInventory().addProduct(new ProductSlot(27), new Snack("Rice Krispies", 1.35, 12));
         machine.getInventory().addProduct(new ProductSlot(28), new Snack("Cheese Crackers", 1.30, 15));
         machine.getInventory().addProduct(new ProductSlot(29), new Snack("Beef Jerky", 2.75, 8));
+        machine.getInventory().addProduct(new ProductSlot(30), new Drink("Iced Tea", 2.10, 12));
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(650, 850);
+        setSize(700, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // ================= TOP PANEL =================
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        // ================= TOP =================
+        JPanel top = new JPanel(new GridLayout(3, 1));
 
         status = new JLabel("Insert Coins");
         balance = new JLabel("Balance: $0.00");
+        cartLabel = new JLabel("Cart: empty");
 
-        status.setFont(new Font("Arial", Font.BOLD, 16));
-        balance.setFont(new Font("Arial", Font.PLAIN, 14));
+        top.add(status);
+        top.add(balance);
+        top.add(cartLabel);
 
-        topPanel.add(status);
-        topPanel.add(balance);
-
-        add(topPanel, BorderLayout.NORTH);
+        add(top, BorderLayout.NORTH);
 
         // ================= GRID =================
-        JPanel grid = new JPanel();
-        grid.setLayout(new GridLayout(0, 5, 5, 5));
+        JPanel grid = new JPanel(new GridLayout(0, 5, 5, 5));
 
         // ================= COINS =================
         JButton coin1 = new JButton("$1 Coin");
@@ -108,7 +114,7 @@ public class VendingMachineGUI extends JFrame {
         addButton(grid, "Gatorade", 9, 2.25);
         addButton(grid, "Powerade", 10, 2.35);
 
-        addButton(grid, "Lays Chips", 11, 1.50);
+        addButton(grid, "Lays", 11, 1.50);
         addButton(grid, "Doritos", 12, 1.60);
         addButton(grid, "Cheetos", 13, 1.55);
         addButton(grid, "Ruffles", 14, 1.65);
@@ -130,57 +136,105 @@ public class VendingMachineGUI extends JFrame {
         addButton(grid, "Rice Krispies", 27, 1.35);
         addButton(grid, "Cheese Crackers", 28, 1.30);
         addButton(grid, "Beef Jerky", 29, 2.75);
+        addButton(grid, "Iced Tea", 30, 2.10);
 
-        // ================= DONE BUTTON =================
-        JButton done = new JButton("DONE");
+        // ================= BUY BUTTON =================
+        JButton buy = new JButton("BUY ALL");
 
-        done.addActionListener(e -> {
-            machine.reset();
-            machine.setMessage("Session ended. Thank you!");
+        buy.setBackground(new Color(255, 215, 0));
+
+        buy.addActionListener(e -> {
+
+            double total = 0;
+
+            for (double p : cartPrices) {
+                total += p;
+            }
+
+            if (machine.getBalance() < total) {
+                machine.setMessage("Not enough money for cart");
+                updateUI();
+                return;
+            }
+
+            machine.setMessage("Processing order...");
+            updateUI();
+
+            for (String item : cartNames) {
+                machine.setMessage("Dispensing " + item);
+                updateUI();
+
+                try { Thread.sleep(400); } catch (Exception ignored) {}
+            }
+
+            machine.addBalance(-total);
+
+            cartIds.clear();
+            cartNames.clear();
+            cartPrices.clear();
+
+            updateCart();
+            updateUI();
+
+            machine.setMessage("Order complete. Remaining: $" +
+                    String.format("%.2f", machine.getBalance()));
+
             updateUI();
         });
 
-        grid.add(done);
+        grid.add(buy);
 
         add(grid, BorderLayout.CENTER);
 
         setVisible(true);
     }
 
-    // ================= BUTTON =================
+    // ================= ADD ITEM =================
     private void addButton(JPanel grid, String name, int id, double price) {
 
         JButton btn = new JButton("<html><center>" + name + "<br>$" + price + "</center></html>");
 
-        btn.setPreferredSize(new Dimension(100, 100));
-        btn.setFont(new Font("Arial", Font.BOLD, 10));
-        btn.setFocusPainted(false);
-
-        btn.setBackground(new Color(173, 216, 230));
+        btn.setBackground(new Color(
+                (int)(Math.random() * 200 + 50),
+                (int)(Math.random() * 200 + 50),
+                (int)(Math.random() * 200 + 50)
+        ));
 
         btn.addActionListener(e -> {
 
-            if (machine.getBalance() < price) {
-                machine.setMessage("Not enough money for " + name);
-                updateUI();
-                return;
-            }
+            cartIds.add(id);
+            cartNames.add(name);
+            cartPrices.add(price);
 
-            machine.selectItem(id);
+            machine.setMessage(name + " added to cart");
 
-            machine.setMessage("Dispensing " + name + "...");
-
-            machine.addBalance(-price);
-
-            updateUI();
-
-            machine.setMessage("Dispensed " + name +
-                    " | Remaining: $" + String.format("%.2f", machine.getBalance()));
-
+            updateCart();
             updateUI();
         });
 
         grid.add(btn);
+    }
+
+    // ================= CART =================
+    private void updateCart() {
+
+        if (cartNames.isEmpty()) {
+            cartLabel.setText("Cart: empty");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("<html>Cart:<br>");
+        double total = 0;
+
+        for (int i = 0; i < cartNames.size(); i++) {
+            sb.append("- ").append(cartNames.get(i))
+              .append(" ($").append(cartPrices.get(i)).append(")<br>");
+            total += cartPrices.get(i);
+        }
+
+        sb.append("<br>Total: $").append(String.format("%.2f", total)).append("</html>");
+
+        cartLabel.setText(sb.toString());
     }
 
     // ================= UI =================
