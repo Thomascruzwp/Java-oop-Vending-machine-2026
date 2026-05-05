@@ -11,18 +11,20 @@ public class ReadyState implements VendingState {
         this.machine = machine;
     }
 
+    public void select(int item) {
+        System.out.println("Insert coin first");
+    }
+
     public void insert(Coin coin) {
         machine.addBalance(coin.getValue());
-        System.out.println("Coin inserted: " + coin.getValue());
+        System.out.println("Inserted: " + coin.getValue());
     }
 
-    public void select(int item) {
-        System.out.println("Select after payment.");
+    public void dispense() {
+        System.out.println("Not ready yet");
     }
-
-    public void dispense() {}
 
     public void cancel() {
-        System.out.println("Nothing to cancel.");
+        System.out.println("Nothing to cancel");
     }
 }

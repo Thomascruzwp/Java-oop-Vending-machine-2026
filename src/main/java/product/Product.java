@@ -16,16 +16,16 @@ public abstract class Product {
         return price;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean inStock() {
         return stock > 0;
     }
 
     public void reduceStock() {
         if (stock > 0) stock--;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public abstract void dispense();

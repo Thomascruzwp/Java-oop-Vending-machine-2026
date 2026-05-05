@@ -8,6 +8,6 @@ public class Snack extends Product {
 
     @Override
     public void dispense() {
-        System.out.println("Dispensing snack: " + name);
+        System.out.println("Dispensing snack: " + getName());
     }
 }

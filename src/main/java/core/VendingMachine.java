@@ -1,7 +1,7 @@
 package core;
 
 import state.*;
-import hardware.*;
+import hardware.Coin;
 import product.*;
 
 public class VendingMachine {
@@ -10,20 +10,17 @@ public class VendingMachine {
     private String location;
 
     private Inventory inventory;
-    private CoinAcceptor coinAcceptor;
-
     private VendingState state;
 
     public VendingMachine(String location) {
         this.location = location;
         this.inventory = new Inventory();
-        this.coinAcceptor = new CoinAcceptor();
-
         this.state = new ReadyState(this);
         this.currentBalance = 0;
     }
 
-    // UML METHODS
+    // ===== UML METHODS =====
+
     public void insertCoin(Coin coin) {
         state.insert(coin);
     }
@@ -40,12 +37,14 @@ public class VendingMachine {
         state.cancel();
     }
 
-    // STATE CONTROL
+    // ===== STATE CONTROL =====
+
     public void setState(VendingState state) {
         this.state = state;
     }
 
-    // BALANCE
+    // ===== BALANCE =====
+
     public void addBalance(double amount) {
         currentBalance += amount;
     }
@@ -54,12 +53,18 @@ public class VendingMachine {
         return currentBalance;
     }
 
-    // GETTERS
-    public Inventory getInventory() {
-        return inventory;
+    public void reset() {
+        currentBalance = 0;
+        System.out.println("Machine reset");
     }
 
-    public CoinAcceptor getCoinAcceptor() {
-        return coinAcceptor;
+    // ===== LOCATION FIX (REMOVES WARNING) =====
+    public String getLocation() {
+        return location;
+    }
+
+    // ===== INVENTORY =====
+    public Inventory getInventory() {
+        return inventory;
     }
 }
