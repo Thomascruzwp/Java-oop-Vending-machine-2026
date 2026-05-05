@@ -4,8 +4,16 @@ import core.*;
 import hardware.Coin;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class VendingMachineGUI extends JFrame {
 
@@ -15,7 +23,8 @@ public class VendingMachineGUI extends JFrame {
     private JLabel balance;
     private JLabel cartLabel;
 
-    private List<String> cart = new ArrayList<>();
+    // ✔ FIX: fully qualified List to avoid AWT conflict
+    private java.util.List<String> cart = new java.util.ArrayList<>();
 
     private static class Item {
         String name;
@@ -115,14 +124,12 @@ public class VendingMachineGUI extends JFrame {
 
         JButton buy = new JButton("BUY ALL");
         buy.setBackground(Color.GREEN);
-
         buy.addActionListener(e -> processOrder());
 
         grid.add(buy);
 
         JButton cancel = new JButton("CANCEL");
         cancel.setBackground(Color.RED);
-
         cancel.addActionListener(e -> {
             cart.clear();
             machine.setMessage("Cart cleared");
@@ -168,7 +175,7 @@ public class VendingMachineGUI extends JFrame {
         grid.add(btn);
     }
 
-    // ================= BUY (SAFE VERSION) =================
+    // ================= BUY (FIXED TIMER) =================
     private void processOrder() {
 
         double total = calculateTotal();
@@ -179,9 +186,9 @@ public class VendingMachineGUI extends JFrame {
             return;
         }
 
-        Iterator<String> iterator = cart.iterator();
+        java.util.Iterator<String> iterator = cart.iterator();
 
-        Timer timer = new Timer(250, null);
+        javax.swing.Timer timer = new javax.swing.Timer(250, null);
 
         timer.addActionListener(e -> {
 
@@ -207,7 +214,7 @@ public class VendingMachineGUI extends JFrame {
         timer.start();
     }
 
-    // ================= CART (ONLY CODES) =================
+    // ================= CART (CODES ONLY) =================
     private void updateCart() {
 
         if (cart.isEmpty()) {
@@ -216,7 +223,6 @@ public class VendingMachineGUI extends JFrame {
         }
 
         StringBuilder sb = new StringBuilder("<html>Cart:<br>");
-
         double total = 0;
 
         for (String code : cart) {
