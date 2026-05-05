@@ -1,7 +1,6 @@
 package gui;
 
 import core.*;
-import product.*;
 import hardware.Coin;
 
 import javax.swing.*;
@@ -46,7 +45,7 @@ public class VendingMachineGUI extends JFrame {
         register("A9", "Gatorade Blue", 2.25);
         register("A10", "Powerade Red", 2.35);
 
-        register("B1", "Lays Classic Chips", 1.50);
+        register("B1", "Lays Chips", 1.50);
         register("B2", "Doritos Nacho", 1.60);
         register("B3", "Cheetos Crunchy", 1.55);
         register("B4", "Ruffles Original", 1.65);
@@ -72,7 +71,7 @@ public class VendingMachineGUI extends JFrame {
 
         // ================= WINDOW =================
         setTitle("Vending Machine");
-        setSize(800, 900);
+        setSize(820, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -92,7 +91,6 @@ public class VendingMachineGUI extends JFrame {
         // ================= GRID =================
         JPanel grid = new JPanel(new GridLayout(0, 4, 10, 10));
 
-        // ================= COINS =================
         JButton c1 = new JButton("$1 Coin");
         JButton c50 = new JButton("$0.50 Coin");
 
@@ -111,49 +109,17 @@ public class VendingMachineGUI extends JFrame {
         grid.add(c1);
         grid.add(c50);
 
-        // ================= ITEMS =================
         for (String code : items.keySet()) {
             addButton(grid, code);
         }
 
-        // ================= BUY =================
         JButton buy = new JButton("BUY ALL");
         buy.setBackground(Color.GREEN);
 
-        buy.addActionListener(e -> {
-
-            double total = calculateTotal();
-
-            if (machine.getBalance() < total) {
-                machine.setMessage("Not enough balance");
-                updateUI();
-                return;
-            }
-
-            machine.setMessage("Processing order...");
-            updateUI();
-
-            for (String code : cart) {
-                Item item = items.get(code);
-
-                machine.setMessage("Dispensing " + item.name);
-                updateUI();
-
-                try { Thread.sleep(250); } catch (Exception ignored) {}
-            }
-
-            machine.addBalance(-total);
-
-            cart.clear();
-            updateCart();
-            updateUI();
-
-            machine.setMessage("Order complete");
-        });
+        buy.addActionListener(e -> processOrder());
 
         grid.add(buy);
 
-        // ================= CANCEL =================
         JButton cancel = new JButton("CANCEL");
         cancel.setBackground(Color.RED);
 
@@ -187,22 +153,58 @@ public class VendingMachineGUI extends JFrame {
                 + "$" + item.price
                 + "</center></html>");
 
-        // 🔥 FIX SIZE (THIS SOLVES CUT-OFF ISSUE)
         btn.setPreferredSize(new Dimension(160, 120));
         btn.setFont(new Font("Arial", Font.BOLD, 11));
-        btn.setMargin(new Insets(5, 5, 5, 5));
-
         btn.setFocusPainted(false);
         btn.setBackground(new Color(200, 220, 255));
 
         btn.addActionListener(e -> {
             cart.add(code);
-            machine.setMessage(item.name + " added to cart");
+            machine.setMessage(item.name + " added");
             updateCart();
             updateUI();
         });
 
         grid.add(btn);
+    }
+
+    // ================= BUY LOGIC (NON FREEZING) =================
+    private void processOrder() {
+
+        double total = calculateTotal();
+
+        if (machine.getBalance() < total) {
+            machine.setMessage("Not enough balance");
+            updateUI();
+            return;
+        }
+
+        Iterator<String> iterator = cart.iterator();
+
+        Timer timer = new Timer(300, null);
+
+        timer.addActionListener(e -> {
+
+            if (!iterator.hasNext()) {
+                timer.stop();
+
+                machine.addBalance(-total);
+                cart.clear();
+
+                updateCart();
+                machine.setMessage("Order complete");
+                updateUI();
+                return;
+            }
+
+            String code = iterator.next();
+            Item item = items.get(code);
+
+            machine.setMessage("Dispensing " + item.name);
+            updateUI();
+        });
+
+        timer.start();
     }
 
     // ================= CART =================
@@ -227,7 +229,6 @@ public class VendingMachineGUI extends JFrame {
         cartLabel.setText(sb.toString());
     }
 
-    // ================= TOTAL =================
     private double calculateTotal() {
         double total = 0;
         for (String code : cart) {
