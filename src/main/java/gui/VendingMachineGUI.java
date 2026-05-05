@@ -1,24 +1,23 @@
 package gui;
 
-import core.VendingMachine;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class VendingMachineGUI extends JFrame {
 
-    private VendingMachine machine;
-
     private JLabel status;
     private JLabel balanceLabel;
-
     private JTextArea cartArea;
 
-    private List<String> cart = new ArrayList<>();
-    private List<Integer> insertedCoins = new ArrayList<>();
+    // ✔ FIXED: fully safe List usage (no ambiguity possible)
+    private java.util.List<String> cart = new ArrayList<>();
+    private java.util.List<Integer> insertedCoins = new ArrayList<>();
 
-    // ================= ITEM MODEL =================
+    // ================= ITEM =================
     private static class Item {
         String name;
         int price; // cents
@@ -33,20 +32,11 @@ public class VendingMachineGUI extends JFrame {
 
     public VendingMachineGUI() {
 
-        machine = new VendingMachine("School");
-
-        // ================= ITEMS (CENTS) =================
+        // ================= ITEMS =================
         register("A1", "Chicken Sandwich", 250);
         register("A2", "Diet Coke", 185);
         register("A3", "Pepsi", 165);
         register("A4", "Sprite", 170);
-        register("A5", "Fanta", 180);
-        register("A6", "Dr Pepper", 190);
-        register("A7", "Water", 100);
-        register("A8", "Sparkling Water", 125);
-        register("A9", "Gatorade", 225);
-        register("A10", "Powerade", 235);
-
         register("C1", "Snickers", 175);
         register("E2", "Rice Krispies", 135);
 
@@ -67,14 +57,11 @@ public class VendingMachineGUI extends JFrame {
 
         add(top, BorderLayout.NORTH);
 
-        // ================= CART (NO SHRINK FIX) =================
+        // ================= CART =================
         cartArea = new JTextArea();
         cartArea.setEditable(false);
 
-        JScrollPane scroll = new JScrollPane(cartArea);
-        scroll.setPreferredSize(new Dimension(200, 300));
-
-        add(scroll, BorderLayout.EAST);
+        add(new JScrollPane(cartArea), BorderLayout.EAST);
 
         // ================= GRID =================
         JPanel grid = new JPanel(new GridLayout(0, 4, 8, 8));
@@ -110,15 +97,16 @@ public class VendingMachineGUI extends JFrame {
 
             for (String code : cart) {
                 status.setText("Dispensing " + code);
-                try { Thread.sleep(60); } catch (Exception ignored) {}
+                try { Thread.sleep(40); } catch (Exception ignored) {}
             }
 
             cart.clear();
             insertedCoins.clear();
+
             updateCart();
+            updateUI();
 
             status.setText("Change: $" + format(change));
-            updateUI();
         });
 
         grid.add(buy);
@@ -135,9 +123,9 @@ public class VendingMachineGUI extends JFrame {
             insertedCoins.clear();
 
             updateCart();
+            updateUI();
 
             status.setText("Refunded: $" + format(refund));
-            updateUI();
         });
 
         grid.add(cancel);
@@ -147,23 +135,22 @@ public class VendingMachineGUI extends JFrame {
         setVisible(true);
     }
 
-    // ================= HELPERS =================
+    // ================= REGISTER =================
     private void register(String code, String name, int price) {
         items.put(code, new Item(name, price));
     }
 
+    // ================= COINS =================
     private void addCoin(JPanel panel, String label, int value) {
 
         JButton btn = new JButton(label);
 
-        btn.addActionListener(e -> {
-            insertedCoins.add(value);
-            updateUI();
-        });
+        btn.addActionListener(e -> insertedCoins.add(value));
 
         panel.add(btn);
     }
 
+    // ================= ITEMS =================
     private void addButton(JPanel panel, String code) {
 
         Item item = items.get(code);
@@ -198,7 +185,7 @@ public class VendingMachineGUI extends JFrame {
         cartArea.setText(sb.toString());
     }
 
-    // ================= CALCULATIONS =================
+    // ================= TOTAL =================
     private int calculateTotal() {
         int total = 0;
         for (String code : cart) {
