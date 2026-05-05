@@ -73,12 +73,12 @@ public class VendingMachineGUI extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // ================= GRID PANEL =================
+        // ================= GRID =================
         JPanel grid = new JPanel();
         grid.setLayout(new GridLayout(0, 5, 5, 5));
 
         // ================= COINS =================
-        JButton coin1 = new JButton("$1 Coin");
+        JButton coin1 = new JButton("$1 Dollar");
         JButton coin50 = new JButton("$0.50 Coin");
 
         coin1.addActionListener(e -> {
@@ -96,40 +96,40 @@ public class VendingMachineGUI extends JFrame {
         grid.add(coin1);
         grid.add(coin50);
 
-        // ================= ITEMS =================
-        addButton(grid, "Coke", 1, 1.50);
-        addButton(grid, "Diet Coke", 2, 1.50);
-        addButton(grid, "Pepsi", 3, 1.50);
-        addButton(grid, "Sprite", 4, 1.50);
-        addButton(grid, "Fanta", 5, 1.50);
-        addButton(grid, "Dr Pepper", 6, 1.50);
+        // ================= ITEMS (UPDATED PRICES) =================
+        addButton(grid, "Coke", 1, 1.75);
+        addButton(grid, "Diet Coke", 2, 1.85);
+        addButton(grid, "Pepsi", 3, 1.65);
+        addButton(grid, "Sprite", 4, 1.70);
+        addButton(grid, "Fanta", 5, 1.80);
+        addButton(grid, "Dr Pepper", 6, 1.90);
         addButton(grid, "Water", 7, 1.00);
         addButton(grid, "Sparkling Water", 8, 1.25);
-        addButton(grid, "Gatorade", 9, 1.75);
-        addButton(grid, "Powerade", 10, 1.75);
+        addButton(grid, "Gatorade", 9, 2.25);
+        addButton(grid, "Powerade", 10, 2.35);
 
-        addButton(grid, "Lays", 11, 1.25);
-        addButton(grid, "Doritos", 12, 1.25);
-        addButton(grid, "Cheetos", 13, 1.25);
-        addButton(grid, "Ruffles", 14, 1.25);
-        addButton(grid, "Pringles", 15, 1.75);
+        addButton(grid, "Lays Chips", 11, 1.50);
+        addButton(grid, "Doritos", 12, 1.60);
+        addButton(grid, "Cheetos", 13, 1.55);
+        addButton(grid, "Ruffles", 14, 1.65);
+        addButton(grid, "Pringles", 15, 2.00);
 
-        addButton(grid, "Snickers", 16, 1.50);
-        addButton(grid, "KitKat", 17, 1.50);
-        addButton(grid, "Twix", 18, 1.50);
-        addButton(grid, "M&Ms", 19, 1.25);
-        addButton(grid, "Skittles", 20, 1.25);
+        addButton(grid, "Snickers", 16, 1.75);
+        addButton(grid, "KitKat", 17, 1.80);
+        addButton(grid, "Twix", 18, 1.85);
+        addButton(grid, "M&Ms", 19, 1.95);
+        addButton(grid, "Skittles", 20, 1.90);
 
-        addButton(grid, "Oreo", 21, 1.75);
-        addButton(grid, "Granola Bar", 22, 1.20);
-        addButton(grid, "Trail Mix", 23, 1.50);
-        addButton(grid, "Peanuts", 24, 1.00);
-        addButton(grid, "Crackers", 25, 1.00);
+        addButton(grid, "Oreo", 21, 2.10);
+        addButton(grid, "Granola Bar", 22, 1.40);
+        addButton(grid, "Trail Mix", 23, 2.30);
+        addButton(grid, "Peanuts", 24, 1.20);
+        addButton(grid, "Crackers", 25, 1.25);
 
-        addButton(grid, "Pretzels", 26, 1.50);
-        addButton(grid, "Rice Krispies", 27, 1.25);
-        addButton(grid, "Cheese Crackers", 28, 1.00);
-        addButton(grid, "Beef Jerky", 29, 2.50);
+        addButton(grid, "Pretzels", 26, 1.45);
+        addButton(grid, "Rice Krispies", 27, 1.35);
+        addButton(grid, "Cheese Crackers", 28, 1.30);
+        addButton(grid, "Beef Jerky", 29, 2.75);
         addButton(grid, "Iced Tea", 30, 1.50);
 
         add(grid, BorderLayout.CENTER);
@@ -151,7 +151,7 @@ public class VendingMachineGUI extends JFrame {
         // COLORS
         if (price <= 1.00) {
             btn.setBackground(new Color(144, 238, 144));
-        } else if (price <= 1.50) {
+        } else if (price <= 1.80) {
             btn.setBackground(new Color(173, 216, 230));
         } else {
             btn.setBackground(new Color(255, 160, 160));
@@ -176,7 +176,7 @@ public class VendingMachineGUI extends JFrame {
         grid.add(btn);
     }
 
-    // ================= UPDATE UI =================
+    // ================= UI UPDATE =================
     private void updateUI() {
         status.setText(machine.getMessage());
         balance.setText("Balance: $" + String.format("%.2f", machine.getBalance()));
