@@ -86,7 +86,7 @@ public class VendingMachineGUI extends JFrame {
         // ================= TOP =================
         JPanel top = new JPanel(new GridLayout(3, 1));
 
-        status = new JLabel("Insert Coins");
+        status = new JLabel("Ready");
         balance = new JLabel("Balance: $0.00");
         cartLabel = new JLabel("Cart: empty");
 
@@ -104,17 +104,9 @@ public class VendingMachineGUI extends JFrame {
         JButton c1 = new JButton("$1 Coin");
         JButton c50 = new JButton("$0.50 Coin");
 
-        c1.addActionListener(e -> {
-            machine.insertCoin(new Coin(1.0));
-            machine.setMessage("Inserted $1");
-            updateUI();
-        });
-
-        c50.addActionListener(e -> {
-            machine.insertCoin(new Coin(0.5));
-            machine.setMessage("Inserted $0.50");
-            updateUI();
-        });
+        // ❌ NO STATUS MESSAGES (SILENT MODE)
+        c1.addActionListener(e -> machine.insertCoin(new Coin(1.0)));
+        c50.addActionListener(e -> machine.insertCoin(new Coin(0.5)));
 
         grid.add(c1);
         grid.add(c50);
@@ -138,9 +130,6 @@ public class VendingMachineGUI extends JFrame {
                 return;
             }
 
-            machine.setMessage("Processing order...");
-            updateUI();
-
             for (String code : cart) {
                 machine.setMessage("Dispensing " + code);
                 updateUI();
@@ -150,14 +139,13 @@ public class VendingMachineGUI extends JFrame {
 
             double change = inserted - total;
 
-            // reset balance
+            // reset everything
             machine.addBalance(-machine.getBalance());
-
             cart.clear();
             updateCart();
 
             if (change > 0) {
-                machine.setMessage("Order complete. Change: $" + String.format("%.2f", change));
+                machine.setMessage("Change returned: $" + String.format("%.2f", change));
             } else {
                 machine.setMessage("Order complete");
             }
@@ -172,8 +160,12 @@ public class VendingMachineGUI extends JFrame {
         cancel.setBackground(Color.RED);
 
         cancel.addActionListener(e -> {
+
+            // ✔ FULL RESET
             cart.clear();
-            machine.setMessage("Cart cleared");
+            machine.addBalance(-machine.getBalance()); // reset money
+
+            status.setText("Cancelled - machine reset");
             updateCart();
             updateUI();
         });
@@ -206,11 +198,10 @@ public class VendingMachineGUI extends JFrame {
         btn.setFocusPainted(false);
         btn.setBackground(new Color(200, 220, 255));
 
-        // silent add
+        // silent cart
         btn.addActionListener(e -> {
             cart.add(code);
             updateCart();
-            updateUI();
         });
 
         grid.add(btn);
