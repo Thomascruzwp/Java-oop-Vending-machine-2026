@@ -4,8 +4,16 @@ import core.*;
 import hardware.Coin;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class VendingMachineGUI extends JFrame {
 
@@ -69,15 +77,16 @@ public class VendingMachineGUI extends JFrame {
         register("E4", "Beef Jerky", 2.75);
         register("E5", "Iced Tea", 2.10);
 
-        // ================= UI =================
+        // ================= WINDOW =================
         setTitle("Vending Machine");
         setSize(800, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // ================= TOP PANEL =================
         JPanel top = new JPanel(new GridLayout(3, 1));
 
-        status = new JLabel("Insert Coins");
+        status = new JLabel("Ready");
         balance = new JLabel("Balance: $0.00");
         cartLabel = new JLabel("Cart: empty");
 
@@ -95,16 +104,14 @@ public class VendingMachineGUI extends JFrame {
         JButton c1 = new JButton("$1 Coin");
         JButton c50 = new JButton("$0.50 Coin");
 
-        // ✔ SHOW BALANCE UPDATE
+        // ✔ FIX: balance updates instantly
         c1.addActionListener(e -> {
             machine.insertCoin(new Coin(1.0));
-            status.setText("Inserted $1.00");
             updateUI();
         });
 
         c50.addActionListener(e -> {
             machine.insertCoin(new Coin(0.5));
-            status.setText("Inserted $0.50");
             updateUI();
         });
 
@@ -129,7 +136,7 @@ public class VendingMachineGUI extends JFrame {
                 return;
             }
 
-            status.setText("Processing order...");
+            status.setText("Processing...");
 
             for (String code : cart) {
                 status.setText("Dispensing " + code);
@@ -160,7 +167,7 @@ public class VendingMachineGUI extends JFrame {
             machine.addBalance(-machine.getBalance());
             cart.clear();
 
-            status.setText("Transaction cancelled");
+            status.setText("Cancelled");
             updateCart();
             updateUI();
         });
