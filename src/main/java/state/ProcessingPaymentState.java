@@ -12,7 +12,7 @@ public class ProcessingPaymentState implements VendingState {
     }
 
     public void select(int item) {
-        System.out.println("Processing payment...");
+        System.out.println("Processing...");
     }
 
     public void insert(Coin coin) {

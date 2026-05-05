@@ -20,7 +20,7 @@ public class DispensingState implements VendingState {
     }
 
     public void dispense() {
-        System.out.println("Done dispensing");
+        System.out.println("Finished dispensing");
         machine.reset();
         machine.setState(new ReadyState(machine));
     }

@@ -21,7 +21,7 @@ public class ReadyState implements VendingState {
     }
 
     public void dispense() {
-        System.out.println("Not ready yet");
+        System.out.println("Cannot dispense yet");
     }
 
     public void cancel() {
